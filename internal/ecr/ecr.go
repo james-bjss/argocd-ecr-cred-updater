@@ -1,7 +1,7 @@
 package ecr
 
 import (
-	"fmt"
+	"errors"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
@@ -25,7 +25,6 @@ func InitializeConfig(region string) (ecriface.ECRAPI, error) {
 	})
 
 	if err != nil {
-		fmt.Println("Error Creating AWS Session")
 		return nil, err
 	}
 	return ecr.New(sess), nil
@@ -38,6 +37,10 @@ func (c client) GetPassword() (string, error) {
 
 	if err != nil {
 		return "", err
+	}
+
+	if len(result.AuthorizationData) == 0 {
+		return "", errors.New("no ECR authorisation token returned")
 	}
 	return *result.AuthorizationData[0].AuthorizationToken, nil
 }

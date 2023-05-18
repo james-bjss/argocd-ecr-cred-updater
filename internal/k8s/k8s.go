@@ -57,7 +57,7 @@ func ConfigureInClusterClient() (*kubernetes.Clientset, error) {
 func (k K8Client) PatchSecret(secretName string, secret string) error {
 	_, err := k.client.CoreV1().Secrets(k.namespace).Get(context.TODO(), secretName, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
-		return fmt.Errorf("secret %s in namespace %s not found\n", secret, k.namespace)
+		return fmt.Errorf("secret %s in namespace %s not found\n", secretName, k.namespace)
 	} else if err != nil {
 		return err
 	}

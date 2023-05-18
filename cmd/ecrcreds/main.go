@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ecrcredrotation/internal/cmd"
+	"ecrcredrotation/internal/config"
 	"ecrcredrotation/internal/ecr"
 	"ecrcredrotation/internal/k8s"
 	"flag"
@@ -17,7 +17,7 @@ func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	// Parse Flags
-	conf, output, err := cmd.ParseFlags(os.Args[0], os.Args[1:])
+	conf, output, err := config.ParseFlags(os.Args[0], os.Args[1:])
 
 	// print default help
 	if err == flag.ErrHelp {
@@ -26,7 +26,7 @@ func main() {
 	}
 
 	if err != nil {
-		log.Error().Msgf("Error Parsing cmd line flags: %v", err)
+		log.Error().Msgf("Error Parsing config line flags: %v", err)
 		log.Error().Msg(output)
 		os.Exit(1)
 	}
@@ -69,6 +69,10 @@ func main() {
 	k8sClient := k8s.New(clientSet, conf.Namespace)
 
 	log.Info().Msgf("Patching Secret..")
-	k8sClient.PatchSecret(conf.SecretName, secret)
+	err = k8sClient.PatchSecret(conf.SecretName, secret)
+	if err != nil {
+		log.Error().Msgf("Failed to Patch Secret: %v", err)
+		os.Exit(1)
+	}
 	log.Info().Msgf("Complete")
 }
