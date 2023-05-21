@@ -1,0 +1,8 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  ecrcred:
+    build: .
+    environment:
+      - AWS_REGION=us-east-1
+      - ARGOCD_NAMESPACE=test
+      - ARGOCD_ECR_SECRET=test-secret

@@ -1,0 +1,15 @@
+{{- if .Values.rbac.enabled  }}
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  labels:
+    app: {{ template "argocd-ecr-cred-updater.name" . }}
+    chart: {{ template "argocd-ecr-cred-updater.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "argocd-ecr-cred-updater.name" . }}-role
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "patch"]
+{{- end -}}

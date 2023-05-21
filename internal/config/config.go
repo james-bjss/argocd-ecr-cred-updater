@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"k8s.io/apimachinery/pkg/util/validation"
 	"k8s.io/client-go/util/homedir"
+	"os"
 	"path/filepath"
 )
 
@@ -37,8 +38,8 @@ func ParseFlags(progname string, args []string) (config *Config, output string, 
 	flags.SetOutput(&buf)
 
 	var conf Config
-	flags.StringVar(&conf.Namespace, "namespace", "", "Namespace where ArgoCD ECR secret resides")
-	flags.StringVar(&conf.SecretName, "secret", "", "Name of ArgoCD Secret to Patch")
+	flags.StringVar(&conf.Namespace, "namespace", os.Getenv("ARGOCD_NAMESPACE"), "Namespace where ArgoCD ECR secret resides")
+	flags.StringVar(&conf.SecretName, "secret", os.Getenv("ARGOCD_ECR_SECRET"), "Name of ArgoCD Secret to Patch")
 	flags.StringVar(&conf.AwsRegion, "region", "", "AWS Region to use")
 	flags.StringVar(&conf.KubeConfig, "kubeconfig", filepath.Join(homedir.HomeDir(), ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 

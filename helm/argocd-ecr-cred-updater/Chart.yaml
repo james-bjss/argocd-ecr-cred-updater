@@ -1,0 +1,7 @@
+apiVersion: v2
+name: argocd-ecr-cred-updater
+description: A Helm chart for ArgoCD ECR Credentials Updater
+
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "argocd-ecr-cred-updater.fullname" . }}
+  labels:
+    app: {{ template "argocd-ecr-cred-updater.name" . }}
+    chart: {{ template "argocd-ecr-cred-updater.chart" . }}
+{{- if .Values.cronjob.labels }}
+{{ toYaml .Values.cronjob.labels | indent 4 }}
+{{- end }}
+{{- if .Values.cronjob.annotations }}
+annotations:
+{{ toYaml .Values.cronjob.annotations | indent 4 }}
+{{- end }}
+spec:
+  schedule: "{{ .Values.cronjob.schedule }}"
+  {{- with .Values.cronjob.concurrencyPolicy }}
+  concurrencyPolicy: {{ . }}
+  {{- end }}
+  {{- with .Values.cronjob.failedJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with .Values.cronjob.successfulJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with .Values.cronjob.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ . }}
+  {{- end }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ .Chart.Name }}
+        spec:
+          restartPolicy: {{ .Values.cronjob.jobRestartPolicy }}
+          serviceAccountName: {{ template "argocd-ecr-cred-updater.serviceAccountName" .}}
+          containers:
+            - name: {{ .Chart.Name }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              env:
+  {{- if .Values.env }}
+  {{- range $key,$value := .Values.env }}
+                - name: {{ $key | upper | quote}}
+                  value: {{ $value | quote}}
+  {{- end }}
+  {{- end }}

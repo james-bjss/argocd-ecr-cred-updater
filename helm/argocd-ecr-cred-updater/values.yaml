@@ -1,0 +1,67 @@
+cronjob:
+  # At 01:00 every day
+  schedule: "0 1 * * *"
+  annotations: {}
+  labels: {}
+  concurrencyPolicy: "Replace"
+  failedJobsHistoryLimit: ""
+  successfulJobsHistoryLimit: "1"
+  jobRestartPolicy: Never
+  startingDeadlineSeconds: ""
+
+pod:
+  annotations: {}
+  labels: {}
+
+image:
+  repository: "ecrcredrotation_ecrcred"
+  # bjssjamesb/argocd_ecr_cred_updater
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+env:
+  AWS_REGION: "us-east-1"
+  ARGOCD_NAMESPACE: "argocd"
+  ARGOCD_ECR_SECRET: ""
+
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+securityContext:
+   capabilities:
+     drop:
+     - ALL
+   readOnlyRootFilesystem: true
+   runAsNonRoot: true
+   runAsUser: 1000
+
+rbac:
+  # Specifies whether RBAC should be enabled
+  enabled: true
+
+resources:
+   limits:
+     cpu: 100m
+     memory: 128Mi
+   requests:
+     cpu: 100m
+     memory: 64Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
